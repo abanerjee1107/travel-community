@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const mysql = require('mysql');
 const http = require('http');
 const socketIo = require('socket.io');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 dotenv.config();
 
@@ -52,6 +54,59 @@ io.on('connection', (socket) => {
     io.emit('receiveNotification', notification);
   });
 });
+
+// Google OAuth Strategy setup
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/google/callback'
+}, (accessToken, refreshToken, profile, done) => {
+    // Check if user exists in database, create if not
+    // Example logic:
+    /*
+    User.findOne({ googleId: profile.id }, (err, user) => {
+        if (err) {
+            return done(err);
+        }
+        if (!user) {
+            // Create new user in your database
+            const newUser = new User({
+                googleId: profile.id,
+                name: profile.displayName,
+                email: profile.emails[0].value
+            });
+            newUser.save((err) => {
+                if (err) console.error(err);
+                return done(null, newUser);
+            });
+        } else {
+            return done(null, user);
+        }
+    });
+    */
+}));
+
+// Passport session setup (if using sessions)
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => {
+        done(err, user);
+    });
+});
+
+// Route to initiate Google OAuth authentication
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Callback route after Google has authenticated the user
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+        // Successful authentication, redirect to frontend or backend route
+        res.redirect('/dashboard');
+    });
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
