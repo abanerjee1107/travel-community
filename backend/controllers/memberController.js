@@ -86,3 +86,40 @@ exports.filterMembersMySQL = (req, res) => {
     res.json(results);
   });
 };
+
+// Add review to member
+exports.addReview = async (req, res) => {
+    const { memberId, rating, comment } = req.body;
+    try {
+        const member = await Member.findById(memberId);
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+        const newReview = {
+            rating,
+            comment,
+            reviewer: req.user._id // Assuming you have authenticated user stored in req.user
+        };
+        member.reviews.push(newReview);
+        await member.save();
+        res.status(201).json({ message: 'Review added successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+// Get reviews of a member
+exports.getMemberReviews = async (req, res) => {
+    const memberId = req.params.memberId;
+    try {
+        const member = await Member.findById(memberId).populate('reviews.reviewer', 'username');
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+        res.status(200).json(member.reviews);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
