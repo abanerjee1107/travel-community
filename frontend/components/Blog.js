@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Blog = ({ blog }) => (
   <div>
     <h2>{blog.title}</h2>
