@@ -5,6 +5,7 @@ const Profile = ({ memberId }) => {
     const [socialLinks, setSocialLinks] = useState([]);
     const [photoUrl, setPhotoUrl] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
+    const [badgeName, setBadgeName] = useState('');
 
     const handleSocialLinksChange = (e) => {
         setSocialLinks(e.target.value.split(','));
@@ -27,6 +28,16 @@ const Profile = ({ memberId }) => {
             setVideoUrl('');
         } catch (error) {
             console.error('Error uploading video:', error);
+        }
+    };
+
+    const handleAwardBadge = async () => {
+        try {
+            await axios.post(`/api/member/${memberId}/awardBadge`, { badgeName });
+            console.log('Badge awarded successfully');
+            setBadgeName('');
+        } catch (error) {
+            console.error('Error awarding badge:', error);
         }
     };
 
@@ -53,6 +64,11 @@ const Profile = ({ memberId }) => {
             
             <input type="text" placeholder="Video URL" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
             <button onClick={handleVideoUpload}>Upload Video</button>
+
+            <br />
+
+            <input type="text" placeholder="Badge Name" value={badgeName} onChange={(e) => setBadgeName(e.target.value)} />
+            <button onClick={handleAwardBadge}>Award Badge</button>
         </div>
     );
 };
