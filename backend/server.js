@@ -7,6 +7,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const helmet = require('helmet'); // Add helmet for security headers
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const io = socketIo(server);
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(helmet()); // Add helmet middleware for security headers
 
 // MySQL connection
 const mysqlDb = mysql.createConnection({
