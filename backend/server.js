@@ -44,34 +44,38 @@ mongoose.connect('mongodb://localhost/travel_community', {
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('Error connecting to MongoDB:', err));
 
-// Socket.io connection
+// Socket.io connection for notifications and chat
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  console.log('New client connected');
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    console.log('Client disconnected');
   });
 
+  // Example notification event
   socket.on('sendNotification', (notification) => {
-    io.emit('receiveNotification', notification);
+    io.emit('receiveNotification', notification); // Broadcast notification to all clients
+  });
+
+  // Example chat message event
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg); // Broadcast message to all clients
   });
 });
 
-// Google OAuth Strategy setup
+// Google OAuth Strategy setup (if needed)
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
-    // Check if user exists in database, create if not
-    // Example logic:
+    // Example logic to handle Google OAuth
     /*
     User.findOne({ googleId: profile.id }, (err, user) => {
         if (err) {
             return done(err);
         }
         if (!user) {
-            // Create new user in your database
             const newUser = new User({
                 googleId: profile.id,
                 name: profile.displayName,
@@ -88,47 +92,21 @@ passport.use(new GoogleStrategy({
     */
 }));
 
-// Passport session setup (if using sessions)
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-        done(err, user);
-    });
-});
-
-// Route to initiate Google OAuth authentication
+// Routes for OAuth and API
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Callback route after Google has authenticated the user
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        // Successful authentication, redirect to frontend or backend route
-        res.redirect('/dashboard');
+        res.redirect('/dashboard'); // Redirect after successful authentication
     });
 
-// Routes
+// Example API routes (replace with your actual routes)
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/blog', require('./routes/blogRoutes'));
 app.use('/api/member', require('./routes/memberRoutes'));
 app.use('/api/message', require('./routes/messagingRoutes'));
 app.use('/api/trip', require('./routes/tripRoutes'));
-
-// WebSocket server for notifications
-io.on('connection', (socket) => {
-    console.log('New client connected');
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    });
-
-    socket.on('sendNotification', (notification) => {
-        io.emit('receiveNotification', notification);
-    });
-});
 
 // Start the server
 const PORT = process.env.PORT || 5000;
