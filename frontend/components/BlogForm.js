@@ -1,5 +1,8 @@
+// BlogForm.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css'; // Import your CSS file
 
 const BlogForm = () => {
     const [title, setTitle] = useState('');
@@ -31,11 +34,11 @@ const BlogForm = () => {
     };
 
     return (
-        <div>
+        <div className="blog-form-container">
             <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
             <textarea placeholder="Content" value={content} onChange={(e) => setContent(e.target.value)} />
             <input type="text" placeholder="Categories (comma-separated)" value={categories} onChange={(e) => setCategories(e.target.value)} />
-            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {error && <div className="error-message">{error}</div>}
             <button onClick={handleBlogCreate}>Create Blog</button>
         </div>
     );
