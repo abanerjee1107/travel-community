@@ -35,14 +35,21 @@ const MemberMySQL = {
 
 // MongoDB Schema
 const memberSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  email: { type: String, required: true },
-  profilePicture: { type: String },
-  socialLinks: { type: [String] }, // Array of social media links
-  // other fields
+    username: { type: String, required: true },
+    email: { type: String, required: true },
+    profilePicture: { type: String },
+    reviews: [
+        {
+            rating: { type: Number, required: true },
+            comment: { type: String, required: true },
+            reviewer: { type: mongoose.Schema.Types.ObjectId, ref: 'Member' },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ],
+    // other fields you may have
 });
 
-const MemberMongoDB = mongoose.model('Member', memberSchema);
+module.exports = mongoose.model('Member', memberSchema);
 
 // Export both MySQL and MongoDB logic
 module.exports = {
