@@ -16,19 +16,19 @@ const upload = multer({ storage: storage }).single('profilePicture');
 
 // Get all members
 exports.getMembers = (req, res) => {
-  Member.getAll((err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(200).json({ data: results });
-  });
+    Member.getAll((err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ data: results });
+    });
 };
 
 // Filter members
 exports.filterMembers = (req, res) => {
-  const filters = req.body;
-  Member.filter(filters, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(200).json({ data: results });
-  });
+    const filters = req.body;
+    Member.filter(filters, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ data: results });
+    });
 };
 
 // Update profile picture
@@ -47,44 +47,44 @@ exports.updateProfilePicture = (req, res) => {
 
 // MySQL: Get all members
 exports.getAllMembersMySQL = (req, res) => {
-  Member.MySQL.getAll((err, results) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error fetching members from MySQL' });
-    }
-    res.json(results);
-  });
+    Member.MySQL.getAll((err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching members from MySQL' });
+        }
+        res.json(results);
+    });
 };
 
 // MongoDB: Add a new member
 exports.addMemberMongoDB = (req, res) => {
-  const newMember = new Member.MongoDB({
-    // Add other fields from req.body as required
-    profilePicture: req.body.profilePicture || ''
-  });
+    const newMember = new Member.MongoDB({
+        // Add other fields from req.body as required
+        profilePicture: req.body.profilePicture || ''
+    });
 
-  newMember.save((err, savedMember) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error saving member to MongoDB' });
-    }
-    res.json(savedMember);
-  });
+    newMember.save((err, savedMember) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error saving member to MongoDB' });
+        }
+        res.json(savedMember);
+    });
 };
 
 // MySQL: Filter members
 exports.filterMembersMySQL = (req, res) => {
-  const filters = {
-    destination: req.query.destination,
-    budget: req.query.budget,
-    currency: req.query.currency,
-    language: req.query.language
-  };
+    const filters = {
+        destination: req.query.destination,
+        budget: req.query.budget,
+        currency: req.query.currency,
+        language: req.query.language
+    };
 
-  Member.MySQL.filter(filters, (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error filtering members from MySQL' });
-    }
-    res.json(results);
-  });
+    Member.MySQL.filter(filters, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error filtering members from MySQL' });
+        }
+        res.json(results);
+    });
 };
 
 // Add review to member
@@ -122,4 +122,45 @@ exports.getMemberReviews = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
+};
+
+// Upload photo for member
+const uploadPhoto = async (req, res) => {
+    const memberId = req.params.memberId;
+    const photoUrl = req.body.photoUrl;
+    try {
+        const member = await Member.findById(memberId);
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+        member.photos.push(photoUrl);
+        await member.save();
+        res.status(201).json({ message: 'Photo uploaded successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+// Upload video for member
+const uploadVideo = async (req, res) => {
+    const memberId = req.params.memberId;
+    const videoUrl = req.body.videoUrl;
+    try {
+        const member = await Member.findById(memberId);
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+        member.videos.push(videoUrl);
+        await member.save();
+        res.status(201).json({ message: 'Video uploaded successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = {
+    uploadPhoto,
+    uploadVideo,
 };
