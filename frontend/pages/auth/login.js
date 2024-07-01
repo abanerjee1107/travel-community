@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,6 +23,10 @@ const Login = () => {
       .catch(err => console.error(err));
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = '/auth/google';
+  };
+
   return (
     <div>
       <h1>Login</h1>
@@ -41,6 +45,7 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
+      <button onClick={handleGoogleLogin}>Login with Google</button>
     </div>
   );
 };
