@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const containerStyle = {
     width: '100%',
@@ -24,8 +26,8 @@ const TripPlanner = ({ onCreateTrip }) => {
 
     const [tripName, setTripName] = useState('');
     const [members, setMembers] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
 
     const handleChange = (e) => {
         setTrip({
@@ -57,6 +59,10 @@ const TripPlanner = ({ onCreateTrip }) => {
         }
     };
 
+    const handleDateChange = (date) => {
+        setStartDate(date);
+    };
+
     return (
         <div>
             <div>
@@ -82,7 +88,10 @@ const TripPlanner = ({ onCreateTrip }) => {
             <div>
                 <input type="text" placeholder="Trip Name" value={tripName} onChange={(e) => setTripName(e.target.value)} />
                 <input type="text" placeholder="Members (comma-separated)" value={members} onChange={(e) => setMembers(e.target.value)} />
-                <input type="date" placeholder="Start Date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                <Calendar
+                    onChange={handleDateChange}
+                    value={startDate}
+                />
                 <input type="date" placeholder="End Date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                 <button onClick={handleCreateGroupTrip}>Create Group Trip</button>
             </div>
