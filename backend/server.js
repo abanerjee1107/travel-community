@@ -117,6 +117,19 @@ app.use('/api/member', require('./routes/memberRoutes'));
 app.use('/api/message', require('./routes/messagingRoutes'));
 app.use('/api/trip', require('./routes/tripRoutes'));
 
+// WebSocket server for notifications
+io.on('connection', (socket) => {
+    console.log('New client connected');
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+
+    socket.on('sendNotification', (notification) => {
+        io.emit('receiveNotification', notification);
+    });
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
