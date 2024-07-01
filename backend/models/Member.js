@@ -46,8 +46,9 @@ const memberSchema = new mongoose.Schema({
             createdAt: { type: Date, default: Date.now }
         }
     ],
-    photos: [{ type: String }], // Array of uploaded photo URLs
-    videos: [{ type: String }] // Array of uploaded video URLs
+    photos: [{ type: String }],
+    videos: [{ type: String }],
+    badges: [{ type: String }] // Added badges field
     // other fields you may have
 });
 
