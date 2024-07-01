@@ -35,3 +35,20 @@ exports.getTripDetails = (req, res) => {
       res.status(500).send(e.response.data.error_message);
     });
 };
+
+exports.createGroupTrip = (req, res) => {
+  const { tripName, members, startDate, endDate } = req.body;
+  // Assuming you have a GroupTrip model or schema defined
+  GroupTrip.create({ tripName, members, startDate, endDate }, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: 'Group trip created successfully', data: result });
+  });
+};
+
+exports.getGroupTrips = (req, res) => {
+  // Assuming you have a GroupTrip model or schema defined
+  GroupTrip.find({}, (err, groupTrips) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(200).json({ data: groupTrips });
+  });
+};
