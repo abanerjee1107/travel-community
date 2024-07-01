@@ -1,6 +1,8 @@
 const db = require('../config/db');
+const mongoose = require('mongoose');
 
-const Member = {
+// MySQL Logic
+const MemberMySQL = {
   getAll: (callback) => {
     const query = 'SELECT * FROM members';
     db.query(query, callback);
@@ -31,4 +33,19 @@ const Member = {
   },
 };
 
-module.exports = Member;
+// MongoDB Schema
+const memberSchema = new mongoose.Schema({
+  // other fields
+  profilePicture: {
+    type: String,
+    default: ''
+  }
+});
+
+const MemberMongoDB = mongoose.model('Member', memberSchema);
+
+// Export both MySQL and MongoDB logic
+module.exports = {
+  MySQL: MemberMySQL,
+  MongoDB: MemberMongoDB
+};
