@@ -35,11 +35,11 @@ const MemberMySQL = {
 
 // MongoDB Schema
 const memberSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  email: { type: String, required: true },
+  profilePicture: { type: String },
+  socialLinks: { type: [String] }, // Array of social media links
   // other fields
-  profilePicture: {
-    type: String,
-    default: ''
-  }
 });
 
 const MemberMongoDB = mongoose.model('Member', memberSchema);
@@ -47,5 +47,5 @@ const MemberMongoDB = mongoose.model('Member', memberSchema);
 // Export both MySQL and MongoDB logic
 module.exports = {
   MySQL: MemberMySQL,
-  MongoDB: MemberMongoDB
+  MongoDB: MemberMongoDB,
 };
