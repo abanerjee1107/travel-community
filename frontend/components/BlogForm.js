@@ -22,7 +22,11 @@ const BlogForm = () => {
             setError(''); // Clear any previous errors
         } catch (error) {
             console.error(error);
-            setError('Failed to create blog. Please try again.'); // Provide specific error message for failed submission
+            if (error.response && error.response.status === 400) {
+                setError('Validation failed. Please check your inputs.'); // Example: Backend validation error
+            } else {
+                setError('Failed to create blog. Please try again.'); // General error message
+            }
         }
     };
 
