@@ -1,3 +1,5 @@
+// Blog.js for MySQL
+
 const db = require('../config/db');
 
 const Blog = {
