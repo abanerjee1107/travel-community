@@ -46,12 +46,13 @@ const memberSchema = new mongoose.Schema({
             createdAt: { type: Date, default: Date.now }
         }
     ],
+    photos: [{ type: String }], // Array of uploaded photo URLs
+    videos: [{ type: String }] // Array of uploaded video URLs
     // other fields you may have
 });
 
-module.exports = mongoose.model('Member', memberSchema);
+const MemberMongoDB = mongoose.model('Member', memberSchema);
 
-// Export both MySQL and MongoDB logic
 module.exports = {
   MySQL: MemberMySQL,
   MongoDB: MemberMongoDB,
