@@ -44,3 +44,45 @@ exports.updateProfilePicture = (req, res) => {
         });
     });
 };
+
+// MySQL: Get all members
+exports.getAllMembersMySQL = (req, res) => {
+  Member.MySQL.getAll((err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error fetching members from MySQL' });
+    }
+    res.json(results);
+  });
+};
+
+// MongoDB: Add a new member
+exports.addMemberMongoDB = (req, res) => {
+  const newMember = new Member.MongoDB({
+    // Add other fields from req.body as required
+    profilePicture: req.body.profilePicture || ''
+  });
+
+  newMember.save((err, savedMember) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error saving member to MongoDB' });
+    }
+    res.json(savedMember);
+  });
+};
+
+// MySQL: Filter members
+exports.filterMembersMySQL = (req, res) => {
+  const filters = {
+    destination: req.query.destination,
+    budget: req.query.budget,
+    currency: req.query.currency,
+    language: req.query.language
+  };
+
+  Member.MySQL.filter(filters, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error filtering members from MySQL' });
+    }
+    res.json(results);
+  });
+};
