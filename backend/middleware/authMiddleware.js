@@ -1,8 +1,12 @@
 const jwt = require('jsonwebtoken');
+const csrf = require('csurf');
 
+// JWT Authentication Middleware
 const authenticateToken = (req, res, next) => {
-  const token = req.header('Authorization').split(' ')[1];
+  const authHeader = req.header('Authorization');
+  if (!authHeader) return res.status(401).json({ message: 'Access Denied' });
 
+  const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Access Denied' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
@@ -12,4 +16,10 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-module.exports = authenticateToken;
+// CSRF Protection Middleware
+const csrfProtection = csrf({ cookie: true });
+
+module.exports = {
+  authenticateToken,
+  csrfProtection,
+};
